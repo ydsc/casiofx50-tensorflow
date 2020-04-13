@@ -493,16 +493,21 @@ make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432 TAGS=portable_op
 
 e.g:
 ```
-make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432 TAGS=portable_optimized CCSPATH=~/ti/ccs1000 SDKPATH=~/ti/simplelink_msp432p4__3_40_02_01 generate_micro_speech_msp432_project
+make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432 TAGS=portable_optimized CCSPATH=~/ti/ccs1000 SDKPATH=~/ti/simplelink_msp432p4_sdk_3_40_01_02 generate_micro_speech_msp432_project
 ```
 
 
 Code Composer Studio will be launched automatically after the project is created.
 
 - Build and Flash:
-    - In Code Composer Studio, select Run->Load-micro_speech
 
-- Use the following commnad to display the program output:
+In Code Composer Studio, select Run->Debug
+ - CCS will build the project and flash it to the device
+ - When flasing is done, select Run->Terminate
+ - Reset the board manually
+ 
+    
+Use the following commnad to display the program output:
     ```
     screen /dev/ttyACM0 115200
     ```
