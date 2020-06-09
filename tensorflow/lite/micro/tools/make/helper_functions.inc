@@ -410,7 +410,7 @@ $(PRJDIR)$(2)/$(2)/components/tfmicro/third_party/%: tensorflow/lite/micro/tools
 	@cp $$< $$@
 
 generate_$(2)_msp432_project:
-	$(CCSPATH)/ccs/eclipse/eclipse -noSplash -data $(PRJDIR)$(2) -application com.ti.ccstudio.apps.importProject -ccs.location $(SDKPATH)/examples/nortos/MSP_EXP432P401R/drivers/$(2)/gcc/$(2)_MSP_EXP432P401R_nortos_gcc.projectspec
+	$(CCSPATH)/ccs/eclipse/eclipse -noSplash -data $(PRJDIR)$(2) -application com.ti.ccstudio.apps.importProject -ccs.location tensorflow/lite/micro/examples/$(2)/$(TARGET)/ccs/gcc/$(2)_MSP_EXP432P401R_nortos_gcc.projectspec
 	$(CCSPATH)/ccs/eclipse/ccstudio -noSplash -data $(PRJDIR)$(2)
 
 
