@@ -489,11 +489,11 @@ Generate, build and flash the project:
 The makefile requires the location of Code Composer Studio and the MSP432 SDK - the default directories should be under the user's directory (~/ti)
 
 - Command:
-make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432 TAGS=portable_optimized **CCSPATH=**~/ti/ccsVERSION **SDKPATH=**~/ti/simplelink_msp432p4_VERSION generate_micro_speech_msp432_project
+make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432 TAGS=portable_optimized **CCSPATH=**~/ti/ccsVERSION generate_micro_speech_msp432_project
 
 e.g:
 ```
-make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432 TAGS=portable_optimized CCSPATH=~/ti/ccs1000 SDKPATH=~/ti/simplelink_msp432p4_sdk_3_40_01_02 generate_micro_speech_msp432_project
+make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432 TAGS=portable_optimized CCSPATH=~/ti/ccs1000 generate_micro_speech_msp432_project
 ```
 
 

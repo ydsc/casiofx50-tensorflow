@@ -410,7 +410,9 @@ $(PRJDIR)$(2)/$(2)/components/tfmicro/third_party/%: tensorflow/lite/micro/tools
 	@cp $$< $$@
 
 generate_$(2)_msp432_project:
-	$(CCSPATH)/ccs/eclipse/eclipse -noSplash -data $(PRJDIR)$(2) -application com.ti.ccstudio.apps.importProject -ccs.location tensorflow/lite/micro/examples/$(2)/$(TARGET)/ccs/gcc/$(2)_MSP_EXP432P401R_nortos_gcc.projectspec
+	git clone --single-branch --branch msp432 https://github.com/TexasInstruments/tensorflow-lite-micro-examples "$(PRJDIR)$(2)/tensorflow-lite-micro-examples"
+	$(CCSPATH)/ccs/eclipse/eclipse -noSplash -data $(PRJDIR)$(2) -application com.ti.ccstudio.apps.importProject -ccs.location "$(PRJDIR)$(2)/tensorflow-lite-micro-examples/micro_speech/ccs/gcc/$(2)_MSP_EXP432P401R_nortos_gcc.projectspec"
+	rm -rf $(PRJDIR)$(2)/tensorflow-lite-micro-examples
 	$(CCSPATH)/ccs/eclipse/ccstudio -noSplash -data $(PRJDIR)$(2)
 
 
