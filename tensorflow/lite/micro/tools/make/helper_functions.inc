@@ -384,7 +384,7 @@ endef
 # 8 - C++ compilation flags needed.
 # 9 - C compilation flags needed.
 # 10 - List of includes.
-define generate_msp432_project
+define generate_msp432p401r_project
 $(PRJDIR)$(2)/$(2)/LICENSE: LICENSE
 	@mkdir -p $$(dir $$@)
 	@cp $$< $$@
@@ -409,21 +409,19 @@ $(PRJDIR)$(2)/$(2)/components/tfmicro/third_party/%: tensorflow/lite/micro/tools
 	@mkdir -p $$(dir $$@)
 	@cp $$< $$@
 
-generate_$(2)_msp432_project:
-	git clone --single-branch --branch msp432 https://github.com/TexasInstruments/tensorflow-lite-micro-examples "$(PRJDIR)$(2)/tensorflow-lite-micro-examples"
-	$(CCSPATH)/ccs/eclipse/eclipse -noSplash -data $(PRJDIR)$(2) -application com.ti.ccstudio.apps.importProject -ccs.location "$(PRJDIR)$(2)/tensorflow-lite-micro-examples/micro_speech/ccs/gcc/$(2)_MSP_EXP432P401R_nortos_gcc.projectspec"
-	rm -rf $(PRJDIR)$(2)/tensorflow-lite-micro-examples
+generate_$(2)_msp432p401r_project:	
+	git clone --single-branch --branch MSP432P401R https://github.com/TexasInstruments/tensorflow-lite-micro-examples "$(PRJDIR)$(2)/tensorflow-lite-micro-examples"
+	$(CCSPATH)/ccs/eclipse/eclipse -noSplash -data $(PRJDIR)$(2) -application com.ti.ccstudio.apps.importProject -ccs.location "$(PRJDIR)$(2)/tensorflow-lite-micro-examples/$(2)/gcc/$(2)_MSP_EXP432P401R_nortos_gcc.projectspec"
 	$(CCSPATH)/ccs/eclipse/ccstudio -noSplash -data $(PRJDIR)$(2)
 
-
-generate_$(2)_msp432_project: \
+generate_$(2)_msp432p401r_project: \
 $(addprefix $(PRJDIR)$(2)/$(2)/,\
 $(patsubst tensorflow/%,components/tfmicro/tensorflow/%,\
 $(patsubst third_party/%,components/tfmicro/third_party/%,\
 $(patsubst tensorflow/lite/micro/examples/$(2)/%,components/tfmicro/tensorflow/lite/micro/examples/$(2)/%,$(3) $(4) $(5) $(6))))) \
 $(addprefix $(PRJDIR)$(2)/$(2)/,$(1))
 
-ALL_PROJECT_TARGETS += generate_$(2)_msp432_project
+ALL_PROJECT_TARGETS += generate_$(2)_msp432p401r_project
 endef
 
 
@@ -443,7 +441,7 @@ $(call generate_project,mbed,$(MBED_PROJECT_FILES),$(1),$(MICROLITE_CC_SRCS) $(T
 $(call generate_project,keil,$(KEIL_PROJECT_FILES),$(1),$(MICROLITE_CC_SRCS) $(THIRD_PARTY_CC_SRCS) $(2),$(MICROLITE_CC_HDRS) $(THIRD_PARTY_CC_HDRS) $(MICROLITE_TEST_HDRS) $(3),$(MICROLITE_LIBS),$(CXXFLAGS),$(CCFLAGS),$(TARGET_TOOLCHAIN_ROOT),$(TARGET_TOOLCHAIN_PREFIX))
 $(call generate_arduino_project,$(ARDUINO_PROJECT_FILES),$(1),$(MICROLITE_CC_SRCS) $(THIRD_PARTY_CC_SRCS) $(2),$(MICROLITE_CC_HDRS) $(THIRD_PARTY_CC_HDRS) $(MICROLITE_TEST_HDRS) $(3),$(MICROLITE_LIBS),$(CXXFLAGS),$(CCFLAGS))
 $(call generate_esp_project,$(ESP_PROJECT_FILES),$(1),$(MICROLITE_CC_SRCS) $(THIRD_PARTY_CC_SRCS),$(MICROLITE_CC_HDRS) $(THIRD_PARTY_CC_HDRS) $(MICROLITE_TEST_HDRS),$(2),$(3),$(MICROLITE_LIBS),$(CXXFLAGS),$(CCFLAGS),$(PROJECT_INCLUDES))
-$(call generate_msp432_project,$(MSP432_PROJECT_FILES),$(1),$(MICROLITE_CC_SRCS) $(THIRD_PARTY_CC_SRCS),$(MICROLITE_CC_HDRS) $(THIRD_PARTY_CC_HDRS) $(MICROLITE_TEST_HDRS),$(2),$(3),$(MICROLITE_LIBS),$(CXXFLAGS),$(CCFLAGS),$(PROJECT_INCLUDES))
+$(call generate_msp432p401r_project,$(MSP432_PROJECT_FILES),$(1),$(MICROLITE_CC_SRCS) $(THIRD_PARTY_CC_SRCS),$(MICROLITE_CC_HDRS) $(THIRD_PARTY_CC_HDRS) $(MICROLITE_TEST_HDRS),$(2),$(3),$(MICROLITE_LIBS),$(CXXFLAGS),$(CCFLAGS),$(PROJECT_INCLUDES))
 endef
 
 # Handles the details of generating a binary target, including specializing

@@ -21,7 +21,7 @@ kilobytes of Flash.
 -   [Deploy to SparkFun Edge](#deploy-to-sparkfun-edge)
 -   [Deploy to STM32F746](#deploy-to-STM32F746)
 -   [Deploy to NXP FRDM K66F](#deploy-to-nxp-frdm-k66f)
--   [Deploy to MSP432](#deploy-to-msp432)
+-   [Deploy to MSP432P401R](#deploy-to-msp432p401r)
 -   [Run on macOS](#run-on-macos)
 -   [Run the tests on a development machine](#run-the-tests-on-a-development-machine)
 -   [Calculating the input to the neural network](#calculating-the-input-to-the-neural-network)
@@ -474,7 +474,7 @@ using [ARM Mbed](https://github.com/ARMmbed/mbed-cli).
     in black color. If there is no output on the serial port, you can connect
     headphone to headphone port to check if audio loopback path is working.
 
-## Deploy to MSP432
+## Deploy to MSP432P401R
 Hardware requirements:
 1. Development kit: TI MSP432P4R01 LaunchPad
 2. Add-on board: TI BOOSTXL-AUDIO
@@ -482,18 +482,18 @@ Hardware requirements:
 Software requirements:
 1. Download and install Code Composer Studio 10+ ([instructions](http://software-dl.ti.com/ccs/esd/documents/users_guide/ccs_installation.html#))
     - See section 3.2.3.5. Device Support - when prompted select "SimpleLink MSP432 low power + performance MCUs" component before proceeding
-2. Download and install the latest **MSP432P4** SDK ([instructions](http://www.ti.com/tool/SIMPLELINK-MSP432-SDK))
+2. Download and install the latest **MSP432P401R** SDK ([instructions](http://www.ti.com/tool/SIMPLELINK-MSP432-SDK))
 
 Generate, build and flash the project:
 
 The makefile requires the location of Code Composer Studio and the MSP432 SDK - the default directories should be under the user's directory (~/ti)
 
 - Command:
-make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432 TAGS=portable_optimized **CCSPATH=**~/ti/ccsVERSION generate_micro_speech_msp432_project
+make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432p401r TAGS=portable_optimized **CCSPATH=**~/ti/ccsVERSION generate_micro_speech_msp432p401r_project
 
 e.g:
 ```
-make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432 TAGS=portable_optimized CCSPATH=~/ti/ccs1000 generate_micro_speech_msp432_project
+make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432p401r TAGS=portable_optimized CCSPATH=~/ti/ccs1000 generate_micro_speech_msp432p401r_project
 ```
 
 

@@ -19,6 +19,7 @@ animation.
 -   [Deploy to ESP32](#deploy-to-esp32)
 -   [Deploy to SparkFun Edge](#deploy-to-sparkfun-edge)
 -   [Deploy to STM32F746](#deploy-to-STM32F746)
+-   [Deploy to MSP432P401R](#deploy-to-msp432p401r)
 -   [Run the tests on a development machine](#run-the-tests-on-a-development-machine)
 
 ## Understand the model
@@ -373,6 +374,46 @@ x_value: 1.1843798*2^2, y_value: -1.9542645*2^-1
 
 To stop viewing the debug output with `screen`, hit `Ctrl+A`, immediately
 followed by the `K` key, then hit the `Y` key.
+
+
+## Deploy to MSP432P401R
+Hardware requirements:
+1. Development kit: TI MSP432P4R01 LaunchPad
+2. Add-on board: TI BOOSTXL-AUDIO
+
+Software requirements:
+1. Download and install Code Composer Studio 10+ ([instructions](http://software-dl.ti.com/ccs/esd/documents/users_guide/ccs_installation.html#))
+    - See section 3.2.3.5. Device Support - when prompted select "SimpleLink MSP432 low power + performance MCUs" component before proceeding
+2. Download and install the latest **MSP432P401R** SDK ([instructions](http://www.ti.com/tool/SIMPLELINK-MSP432-SDK))
+
+Generate, build and flash the project:
+
+The makefile requires the location of Code Composer Studio and the MSP432 SDK - the default directories should be under the user's directory (~/ti)
+
+- Command:
+make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432p401r TAGS=portable_optimized **CCSPATH=**~/ti/ccsVERSION generate_hello_world_msp432p401r_project
+
+e.g:
+```
+make -f tensorflow/lite/micro/tools/make/Makefile TARGET=msp432p401r TAGS=portable_optimized CCSPATH=~/ti/ccs1000 generate_hello_world_msp432p401r_project
+```
+
+
+Code Composer Studio will be launched automatically after the project is created.
+
+- Build and Flash:
+
+In Code Composer Studio, select Run->Debug
+ - CCS will build the project and flash it to the device
+ - When flasing is done, select Run->Terminate
+ - Reset the board manually
+ 
+    
+Use the following commnad to display the program output:
+    ```
+    screen /dev/ttyACM0 115200
+    ```
+
 
 ### Run the tests on a development machine
 
