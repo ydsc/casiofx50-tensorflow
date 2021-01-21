@@ -591,6 +591,8 @@ class Interpreter {
 
 #endif  // DOXYGEN_SKIP
 
+  std::vector<std::pair<std::string, uint64_t>> get_TI_benchmark_data();
+
  private:
   friend class InterpreterBuilder;
   friend class tflite::InterpreterTest;
@@ -661,6 +663,10 @@ class Interpreter {
   // An empty one means there's no delegate to be applied by default or
   // delegates have been applied and doesn't need to be applied again.
   std::vector<TfLiteDelegatePtr> lazy_delegate_providers_;
+
+  uint64_t run_start_ts, run_start_ddr_read, run_start_ddr_write;
+  uint64_t run_end_ts, run_end_ddr_read, run_end_ddr_write;
+
 };
 
 }  // namespace tflite

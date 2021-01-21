@@ -741,6 +741,8 @@ class Subgraph {
 
   // A map of resources. Owned by interpreter and shared by multiple subgraphs.
   resource::ResourceMap* resources_ = nullptr;
+
+  std::vector<std::pair<std::string, void *>> get_custom_data(std::string);
 };
 
 }  // namespace tflite
