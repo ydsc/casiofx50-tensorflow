@@ -28,7 +28,7 @@ HOST_ARCH := $(shell if uname -m | grep -q i[345678]86; then echo x86_32; else u
 TARGET := $(HOST_OS)
 TARGET_ARCH := $(HOST_ARCH)
 
-INCLUDES := \
+INCLUDES = \
 -I. \
 -I$(MAKEFILE_DIR)/../../../../../ \
 -I$(MAKEFILE_DIR)/../../../../../../ \
@@ -45,7 +45,8 @@ INCLUDES := \
 -I$(MAKEFILE_DIR)/downloads/cpuinfo/include \
 -I$(MAKEFILE_DIR)/downloads/cpuinfo/src \
 -I$(MAKEFILE_DIR)/downloads/cpuinfo/deps/clog/include \
--I$(OBJDIR)
+-I$(OBJDIR) \
+-I$(TIIE_DIR)
 # This is at the end so any globally-installed frameworks like protobuf don't
 # override local versions in the source tree.
 INCLUDES += -I/usr/local/include
@@ -63,7 +64,7 @@ LIBS := \
 # generate things like the protobuf compiler that require that), so all of
 # these settings are for the target compiler.
 CFLAGS := -O3 -DNDEBUG -DCPU_SETSIZE=__CPU_SETSIZE -fPIC $(EXTRA_CFLAGS)
-CXXFLAGS := $(CFLAGS) --std=c++11 $(EXTRA_CXXFLAGS)
+CXXFLAGS := $(CFLAGS) --std=c++14 $(EXTRA_CXXFLAGS)
 LDOPTS := -L/usr/local/lib
 ARFLAGS := -r
 TARGET_TOOLCHAIN_PREFIX :=
@@ -98,6 +99,7 @@ endif
 # This library is the main target for this makefile. It will contain a minimal
 # runtime that can be linked in to other programs.
 LIB_NAME := libtensorflow-lite.a
+LIBREMOTE_NAME := libtflite-ie-plugin.so
 
 # Benchmark static library and binary
 BENCHMARK_LIB_NAME := benchmark-lib.a
@@ -246,6 +248,9 @@ endif
 
 # Filter out all the excluded files.
 TF_LITE_CC_SRCS := $(filter-out $(CORE_CC_EXCLUDE_SRCS), $(CORE_CC_ALL_SRCS))
+TF_LITE_REMOTE_CC_SRCS := \
+        tensorflow/lite/remote/interpreter_wrapper2/tflite_messages.cc \
+        tensorflow/lite/remote/interpreter_wrapper2/tflite_registry.cc
 
 # Benchmark sources
 BENCHMARK_SRCS_DIR := tensorflow/lite/tools/benchmark
@@ -294,8 +299,10 @@ GENDIR := $(MAKEFILE_DIR)/gen/$(TARGET_OUT_DIR)/
 OBJDIR := $(GENDIR)obj/
 BINDIR := $(GENDIR)bin/
 LIBDIR := $(GENDIR)lib/
+LIBREMOTEDIR := $(GENDIR)libremote/
 
 LIB_PATH := $(LIBDIR)$(LIB_NAME)
+LIBREMOTE_PATH := $(LIBREMOTEDIR)$(LIBREMOTE_NAME)
 BENCHMARK_LIB := $(LIBDIR)$(BENCHMARK_LIB_NAME)
 BENCHMARK_BINARY := $(BINDIR)$(BENCHMARK_BINARY_NAME)
 BENCHMARK_PERF_OPTIONS_BINARY := $(BINDIR)$(BENCHMARK_PERF_OPTIONS_BINARY_NAME)
@@ -314,6 +321,9 @@ $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(LABEL_IMAGE_SRCS))))
 
 LIB_OBJS := $(addprefix $(OBJDIR), \
 $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(TF_LITE_CC_SRCS)))))
+
+LIBREMOTE_OBJS := $(addprefix $(OBJDIR), \
+$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(TF_LITE_REMOTE_CC_SRCS)))))
 
 BENCHMARK_MAIN_OBJ := $(addprefix $(OBJDIR), \
 $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(BENCHMARK_MAIN_SRC))))
@@ -354,6 +364,20 @@ $(LIB_PATH): tensorflow/lite/schema/schema_generated.h $(LIB_OBJS)
 	$(AR) $(ARFLAGS) $(LIB_PATH) $(LIB_OBJS)
 
 lib: $(LIB_PATH)
+
+tensorflow/lite/remote/interpreter_wrapper2/tflite_messages.h: tensorflow/lite/remote/interpreter_wrapper2/tflite_messages.yaml
+	$(TIIE_DIR)/parse_messages.py $< > $@
+
+$(LIBREMOTE_OBJS):: tensorflow/lite/remote/interpreter_wrapper2/tflite_messages.h
+
+$(LIBREMOTE_PATH): lib $(LIBREMOTE_OBJS)
+	@mkdir -p $(dir $@)
+	$(info $(LDFLAGS))
+	$(info $(LIBFLAGS))
+	$(CXX) -shared -rdynamic \
+	-o $(LIBREMOTE_PATH) $(LIBREMOTE_OBJS) $(LIB_PATH)
+
+libremote: $(LIBREMOTE_PATH)
 
 $(MINIMAL_BINARY): $(MINIMAL_OBJS) $(LIB_PATH)
 	@mkdir -p $(dir $@)
