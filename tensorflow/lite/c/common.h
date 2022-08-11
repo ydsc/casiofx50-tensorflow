@@ -900,6 +900,12 @@ typedef struct TfLiteRegistration {
   // Note: It is the responsibility of the registration binder to set this
   // properly.
   int version;
+
+  TfLiteStatus (*get_custom_data)(TfLiteContext* context,
+                                  TfLiteNode* node,
+                                  const char *op_name,
+                                  char **node_name,
+                                  void **node_data);
 } TfLiteRegistration;
 
 // The flags used in `TfLiteDelegate`. Note that this is a bitmask, so the

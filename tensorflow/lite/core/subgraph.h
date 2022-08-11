@@ -860,6 +860,7 @@ class Subgraph {
   // Mapping between tensor index to the last index of the execution plan that
   // uses this tensor.
   std::map<int, int> tensor_to_last_op_index_;
+  std::vector<std::pair<std::string, void *>> get_custom_data(std::string);
 };
 
 }  // namespace tflite

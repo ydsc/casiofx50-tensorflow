@@ -722,6 +722,8 @@ class Interpreter {
 
 #endif  // DOXYGEN_SKIP
 
+  std::vector<std::pair<std::string, uint64_t>> get_TI_benchmark_data();
+
  private:
   friend class InterpreterBuilder;
   friend class tflite::InterpreterTest;
@@ -867,6 +869,10 @@ class Interpreter {
   // Model metadata stored as mapping of name (key) to buffer (value).
   // Data is mapped from the Metadata in TFLite flatbuffer model.
   std::map<std::string, std::string> metadata_;
+
+  uint64_t run_start_ts, run_start_ddr_read, run_start_ddr_write;
+  uint64_t run_end_ts, run_end_ddr_read, run_end_ddr_write;
+
 };
 
 }  // namespace tflite

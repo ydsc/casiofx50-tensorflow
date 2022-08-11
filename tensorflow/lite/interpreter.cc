@@ -57,6 +57,13 @@ namespace tflite {
 
 namespace {
 
+static inline void get_time_u64(uint64_t *t)
+{
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    *t = (uint64_t)ts.tv_sec * (uint64_t)1000000000ull + (uint64_t)ts.tv_nsec;
+}
+
 // Gets the current TfLiteQuantization from the legacy TfLiteQuantizationParams.
 TfLiteQuantization GetQuantizationFromLegacy(
     const TfLiteQuantizationParams& legacy_quantization) {
@@ -217,6 +224,23 @@ TfLiteStatus Interpreter::ResizeInputTensorStrict(
 }
 
 TfLiteStatus Interpreter::Invoke() {
+  void *out;
+  std::vector<std::pair<std::string, void *>> c_data;
+
+  c_data = primary_subgraph().get_custom_data("ddr_stats");
+  if(!c_data.size()) {
+      run_start_ddr_read = run_start_ddr_write = 0;
+  } else {
+      for (auto e : c_data) {
+          std::pair<uint64_t, uint64_t> *s = static_cast<std::pair<uint64_t, uint64_t>*>(e.second);
+          // it does not matter which value we take
+          run_start_ddr_read = s->first;
+          run_start_ddr_write = s->second;
+          delete s;
+      }
+  }
+  get_time_u64(&run_start_ts);
+
   ScopedRuntimeInstrumentationProfile scoped_runtime_event(installed_profiler_,
                                                            "invoke");
 
@@ -235,6 +259,26 @@ TfLiteStatus Interpreter::Invoke() {
           primary_subgraph().EnsureTensorDataIsReadable(tensor_index));
     }
   }
+  get_time_u64(&run_end_ts);
+
+  c_data = primary_subgraph().get_custom_data("ddr_stats");
+  if(!c_data.size()) {
+      run_end_ddr_read = run_end_ddr_write = 0;
+  } else {
+      for (auto e : c_data) {
+          std::pair<uint64_t, uint64_t> *s = static_cast<std::pair<uint64_t, uint64_t>*>(e.second);
+          // it does not matter which value we take
+          run_end_ddr_read = s->first;
+          run_end_ddr_write = s->second;
+          delete s;
+      }
+  }
+
+  /* adjust for wrap around */
+  if(run_end_ddr_read < run_start_ddr_read)
+    run_end_ddr_read = (uint64_t)0xffffffffffffffffull + run_end_ddr_read;
+  if(run_end_ddr_write < run_start_ddr_write)
+    run_end_ddr_write = 0xffffffffffffffffull + run_end_ddr_write;
 
   return kTfLiteOk;
 }
@@ -414,6 +458,40 @@ TfLiteStatus Interpreter::SetMetadata(
     TF_LITE_ENSURE_STATUS(subgraphs_[subgraph_index]->SetMetadata(&metadata_));
   }
   return kTfLiteOk;
+}
+
+std::vector<std::pair<std::string, uint64_t>> Interpreter::get_TI_benchmark_data() {
+    std::vector<std::pair<std::string, uint64_t>> res;
+    std::vector<std::pair<std::string, void *>> c_data;
+
+    /* get the run duration */
+    res.push_back(std::make_pair<std::string, uint64_t>("ts:run_start", uint64_t(run_start_ts)));
+    res.push_back(std::make_pair<std::string, uint64_t>("ts:run_end", uint64_t(run_end_ts)));
+
+    /* get the ddr bw numbers */
+    res.push_back(std::make_pair<std::string, uint64_t>("ddr:read_start", uint64_t(run_start_ddr_read)));
+    res.push_back(std::make_pair<std::string, uint64_t>("ddr:read_end", uint64_t(run_end_ddr_read)));
+    res.push_back(std::make_pair<std::string, uint64_t>("ddr:write_start", uint64_t(run_start_ddr_write)));
+    res.push_back(std::make_pair<std::string, uint64_t>("ddr:write_end", uint64_t(run_end_ddr_write)));
+
+    c_data = primary_subgraph().get_custom_data("perf_stats");
+    if(c_data.size()) {
+        for (auto e : c_data) {
+            std::string prefix = "ts:subgraph_" + e.first + "_";
+            std::string annots[] = {
+                "copy_in_start", "copy_in_end",
+                "proc_start", "proc_end",
+                "copy_out_start", "copy_out_end"
+            };
+            std::vector<uint64_t> *s = static_cast<std::vector<uint64_t>*>(e.second);
+            int index = 0;
+            for(auto it = s->begin(); it != s->end(); it++, index++)
+                res.push_back(std::make_pair<std::string, uint64_t>(prefix + annots[index], uint64_t(*it)));
+            delete s;
+        }
+    }
+
+    return res;
 }
 
 }  // namespace tflite

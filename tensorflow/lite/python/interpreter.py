@@ -940,6 +940,8 @@ class Interpreter(object):
     """
     return self._interpreter.interpreter()
 
+  def get_TI_benchmark_data(self):
+    return self._interpreter.get_TI_benchmark_data()
 
 class InterpreterWithCustomOps(Interpreter):
   """Interpreter interface for TensorFlow Lite Models that accepts custom ops.

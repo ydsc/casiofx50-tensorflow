@@ -108,6 +108,7 @@ class InterpreterWrapper {
   //
   // Returns a pointer to the underlying interpreter.
   Interpreter* interpreter() { return interpreter_.get(); }
+  PyObject* get_TI_benchmark_data() const;
 
  private:
   // Helper function to construct an `InterpreterWrapper` object.
