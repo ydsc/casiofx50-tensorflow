@@ -953,6 +953,12 @@ typedef struct TfLiteRegistration {
   // properly.
   int version;
 
+  TfLiteStatus (*get_custom_data)(TfLiteContext* context,
+                                  TfLiteNode* node,
+                                  const char *op_name,
+                                  char **node_name,
+                                  void **node_data);
+
   // The external version of `TfLiteRegistration`. Since we can't use internal
   // types (such as `TfLiteContext`) for C API to maintain ABI stability.
   // C API user will provide `TfLiteRegistrationExternal` to implement custom

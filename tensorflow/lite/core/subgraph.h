@@ -992,6 +992,7 @@ class Subgraph {
   // interpreter. The owning interpreter will keep this consistent with
   // metadata_ by appropriately parametrized SetMetadata method calls.
   const ControlEdges* control_edges_ = nullptr;
+  std::vector<std::pair<std::string, void *>> get_custom_data(std::string);
 };
 
 }  // namespace tflite

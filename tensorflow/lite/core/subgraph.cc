@@ -2223,6 +2223,25 @@ void Subgraph::MaybeReleaseDynamicTensors(const TfLiteNode& node,
       }
     }
   }
+std::vector<std::pair<std::string, void *>> Subgraph::get_custom_data(std::string token) {
+  std::vector<std::pair<std::string, void *>> ret;
+
+  for (int execution_plan_index = 0;
+       execution_plan_index < execution_plan_.size(); execution_plan_index++) {
+    int node_index = execution_plan_[execution_plan_index];
+    TfLiteNode& node = nodes_and_registration_[node_index].first;
+    const TfLiteRegistration& registration =
+        nodes_and_registration_[node_index].second;
+
+    if(registration.get_custom_data != nullptr) {
+      char *node_name;
+      void *node_data;
+      TfLiteStatus status = registration.get_custom_data(&context_, &node, token.c_str(), &node_name, &node_data);
+      if(status == kTfLiteOk)
+        ret.push_back(std::make_pair(std::string(node_name), node_data));
+    }
+  }
+  return ret;
 }
 
 }  // namespace tflite

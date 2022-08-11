@@ -237,5 +237,8 @@ PYBIND11_MODULE(_pywrap_tensorflow_interpreter_wrapper, m) {
           )pbdoc")
       .def("interpreter", [](InterpreterWrapper& self) {
         return reinterpret_cast<intptr_t>(self.interpreter());
+      })
+      .def("get_TI_benchmark_data", [](const InterpreterWrapper& self) {
+        return tensorflow::PyoOrThrow(self.get_TI_benchmark_data());
       });
 }

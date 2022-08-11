@@ -866,5 +866,14 @@ PyObject* InterpreterWrapper::ModifyGraphWithDelegate(
   Py_RETURN_NONE;
 }
 
+PyObject* InterpreterWrapper::get_TI_benchmark_data() const {
+  TFLITE_PY_ENSURE_VALID_INTERPRETER();
+  std::vector<std::pair<std::string, uint64_t>> res = interpreter_->get_TI_benchmark_data();
+  PyObject* result = PyDict_New();
+  for (auto e : res)
+    PyDict_SetItemString(result, e.first.c_str(), PyLong_FromUnsignedLongLong(e.second));
+  return result;
+}
+
 }  // namespace interpreter_wrapper
 }  // namespace tflite
