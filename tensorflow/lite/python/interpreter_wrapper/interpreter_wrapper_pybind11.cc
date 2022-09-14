@@ -238,7 +238,10 @@ PYBIND11_MODULE(_pywrap_tensorflow_interpreter_wrapper, m) {
       .def("interpreter", [](InterpreterWrapper& self) {
         return reinterpret_cast<intptr_t>(self.interpreter());
       })
-      .def("get_TI_benchmark_data", [](const InterpreterWrapper& self) {
-        return tensorflow::PyoOrThrow(self.get_TI_benchmark_data());
-      });
+      .def(
+        "get_TI_benchmark_data",
+         [](InterpreterWrapper& self, int subgraph_index) {
+          return tensorflow::PyoOrThrow(self.get_TI_benchmark_data(subgraph_index));
+      },
+        py::arg("subgraph_index") = 0);
 }

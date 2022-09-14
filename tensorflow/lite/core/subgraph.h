@@ -277,6 +277,7 @@ class Subgraph {
   // AllocateTensors().
   // Returns status of success or failure.
   TfLiteStatus Invoke();
+  std::vector<std::pair<std::string, uint64_t>> get_TI_benchmark_data();
 
   // Entry point for C node plugin API to report an error.
   void ReportError(const char* format, ...);
