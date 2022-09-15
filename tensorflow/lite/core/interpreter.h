@@ -766,6 +766,8 @@ class Interpreter {
   }
 #endif  // DOXYGEN_SKIP
 
+std::vector<std::pair<std::string, uint64_t>> get_TI_benchmark_data();
+
   /// \warning Experimental interface, subject to change. \n
   /// \brief Get the error reporter associated with this interpreter.
   ErrorReporter* error_reporter() const { return error_reporter_; }
