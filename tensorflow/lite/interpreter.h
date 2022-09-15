@@ -721,7 +721,7 @@ class Interpreter {
   ErrorReporter* error_reporter() const { return error_reporter_; }
 
 #endif  // DOXYGEN_SKIP
-
+std::vector<std::pair<std::string, uint64_t>> get_TI_benchmark_data();
 
  private:
   friend class InterpreterBuilder;

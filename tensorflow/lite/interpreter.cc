@@ -420,9 +420,9 @@ TfLiteStatus Interpreter::SetMetadata(
   return kTfLiteOk;
 }
 
-// std::vector<std::pair<std::string, uint64_t>> Interpreter::get_TI_benchmark_data() {
-//     std::vector<std::pair<std::string, uint64_t>> res = primary_subgraph().get_TI_benchmark_data();
-//     return res;
-// }
+std::vector<std::pair<std::string, uint64_t>> Interpreter::get_TI_benchmark_data() {
+    std::vector<std::pair<std::string, uint64_t>> res = primary_subgraph().get_TI_benchmark_data();
+    return res;
+}
 
 }  // namespace tflite
