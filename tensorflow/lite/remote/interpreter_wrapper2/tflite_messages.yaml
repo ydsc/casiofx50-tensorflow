@@ -1,0 +1,229 @@
+header : TFLITE_MESSAGES
+
+tflite_create_wrapper_from_file:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - id: uint32_t
+    req:
+    - model_path: std::string
+
+tflite_create_wrapper_from_buffer:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - id: uint32_t
+    req:
+    - model_data: std::vector<uint8_t>
+
+tflite_delete_wrapper:
+    resp:
+    - status: int32_t
+    req:
+    - id: uint32_t
+
+tflite_num_tensors:
+    resp:
+    - count: int32_t
+    req:
+    - id: uint32_t
+
+tflite_tensor_name:
+    resp:
+    - name: std::string 
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+
+tflite_tensor_type:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - tensor_type: uint32_t 
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+
+tflite_tensor_size:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - tensor_size : std::vector<int32_t>
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+
+tflite_tensor_size_signature:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - tensor_size : std::vector<int32_t>
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+
+tflite_tensor_quantization:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - scale: float 
+    - zp: int32_t
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+
+tflite_tensor_quantization_parameters:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - scales: std::vector<float>
+    - zps: std::vector<int32_t>
+    - dim: int32_t
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+
+tflite_tensor_sparsity_parameters:
+    resp:
+    - __skip_serialize__
+    - status: int32_t
+    - message: std::string
+    - has_sparsity: uint32_t
+    - traversal_order: std::vector<int32_t>
+    - block_map: std::vector<int32_t>
+    - dim_metadata: std::vector<std::tuple<uint32_t, int32_t, std::vector<int32_t>, std::vector<int32_t>>>
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+
+tflite_num_nodes:
+    resp:
+    - count: int32_t
+    req:
+    - id: uint32_t
+
+tflite_node_name:
+    resp:
+    - name: std::string 
+    req:
+    - id: uint32_t
+    - node_id: int32_t
+
+tflite_node_inputs:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - inputs: std::vector<int32_t>
+    req:
+    - id: uint32_t
+    - node_id: int32_t
+
+tflite_node_outputs:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - outputs: std::vector<int32_t>
+    req:
+    - id: uint32_t
+    - node_id: int32_t
+
+tflite_allocate_tensors:
+    resp:
+    - status: int32_t
+    - message: std::string
+    req:
+    - id: uint32_t
+    - subgraph_index: uint32_t
+
+tflite_input_indices:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - indices: std::vector<int32_t>
+    req:
+    - id: uint32_t
+
+tflite_output_indices:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - indices: std::vector<int32_t>
+    req:
+    - id: uint32_t
+
+tflite_reset_variable_tensors:
+    resp:
+    - status: int32_t
+    - message: std::string
+    req:
+    - id: uint32_t
+
+tflite_resize_input_tensor:
+    resp:
+    - status: int32_t
+    - message: std::string
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+    - dims: std::vector<int32_t>
+    - strict: uint32_t
+    - subgraph_index: uint32_t
+
+tflite_set_num_threads:
+    resp:
+    - status: int32_t
+    - message: std::string
+    req:
+    - id: uint32_t
+    - count: int32_t
+
+tflite_invoke:
+    resp:
+    - status: int32_t
+    - message: std::string
+    req:
+    - id: uint32_t
+    - subgraph_index: uint32_t
+
+tflite_set_tensor:
+    resp:
+    - status: int32_t
+    - message: std::string
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+    - data_type: uint32_t
+    - data_shape: std::vector<int64_t>
+    - data: std::vector<uint8_t>
+    - subgraph_index: uint32_t
+
+tflite_get_tensor:
+    resp:
+    - status: int32_t
+    - message: std::string
+    - data_type: uint32_t
+    - data_shape: std::vector<int64_t>
+    - data: std::vector<uint8_t>
+    req:
+    - id: uint32_t
+    - tensor_id: int32_t
+    - subgraph_index: uint32_t
+
+tflite_get_ti_benchmark_data:
+    resp:
+    - __skip_serialize__
+    - status: int32_t
+    - message: std::string
+    - benchmark_data: std::vector<std::pair<std::string, uint64_t>>
+    req:
+    - id: uint32_t
+    - subgraph_index: uint32_t
+
+tflite_load_exec_delegate:
+    resp:
+    - status: int32_t
+    - message: std::string
+    req:
+    - id: uint32_t
+    - delegate_ptr: uint64_t
+

@@ -488,7 +488,7 @@ class Interpreter:
       for delegate in self._delegates:
         self._interpreter.ModifyGraphWithDelegate(
             delegate._get_native_delegate_pointer())  # pylint: disable=protected-access
-    self._signature_defs = self.get_signature_list()
+    #self._signature_defs = self.get_signature_list() #PC-- commented for now. Workaround. Needs to be added to interpreter_wrapper2
 
     self._metrics = metrics.TFLiteMetrics()
     self._metrics.increase_counter_interpreter_creation()

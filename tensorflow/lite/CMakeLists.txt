@@ -506,78 +506,140 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "iOS")
 endif()
 
 # TFLite library
-set(_ALL_TFLITE_SRCS
-  ${TFLITE_CORE_API_SRCS}
-  ${TFLITE_CORE_C_SRCS}
-  ${TFLITE_CORE_EXPERIMENTAL_SRCS}
-  ${TFLITE_CORE_KERNELS_SRCS}
-  ${TFLITE_CORE_SRCS}
-  ${TFLITE_CORE_TOOLS_SRCS}
-  ${TFLITE_C_SRCS}
-  ${TFLITE_DELEGATES_FLEX_SRCS}
-  ${TFLITE_DELEGATES_GPU_SRCS}
-  ${TFLITE_DELEGATES_NNAPI_SRCS}
-  ${TFLITE_DELEGATES_SRCS}
-  ${TFLITE_DELEGATES_XNNPACK_SRCS}
-  ${TFLITE_DELEGATES_EXTERNAL_SRCS}
-  ${TFLITE_EXPERIMENTAL_REMAT_SRCS}
-  ${TFLITE_EXPERIMENTAL_RESOURCE_SRCS}
-  ${TFLITE_EXPERIMENTAL_RUY_PROFILER_SRCS}
-  ${TFLITE_EXPERIMENTAL_RUY_SRCS}
-  ${TFLITE_KERNEL_INTERNAL_OPT_INTEGER_OPS_SRCS}
-  ${TFLITE_KERNEL_INTERNAL_OPT_SPARSE_OPS_SRCS}
-  ${TFLITE_KERNEL_INTERNAL_OPT_SRCS}
-  ${TFLITE_KERNEL_INTERNAL_REF_INTEGER_OPS_SRCS}
-  ${TFLITE_KERNEL_INTERNAL_REF_SPARSE_OPS_SRCS}
-  ${TFLITE_KERNEL_INTERNAL_REF_SRCS}
-  ${TFLITE_KERNEL_INTERNAL_SRCS}
-  ${TFLITE_KERNEL_SRCS}
-  ${TFLITE_NNAPI_SRCS}
-  ${TFLITE_SRCS}
-  ${TFLITE_PROFILER_SRCS}
-  ${TFLITE_SOURCE_DIR}/internal/signature_def.h
-  ${TFLITE_SOURCE_DIR}/kernels/internal/utils/sparsity_format_converter.cc
-  ${TFLITE_SOURCE_DIR}/schema/conversion_metadata_generated.h
-  ${TFLITE_SOURCE_DIR}/schema/schema_utils.cc
-  ${TFLITE_SOURCE_DIR}/schema/schema_generated.h
-)
-add_library(tensorflow-lite
-  ${_ALL_TFLITE_SRCS}
-)
-set(_ALL_TFLITE_HDRS ${_ALL_TFLITE_SRCS})
-list(FILTER _ALL_TFLITE_HDRS INCLUDE REGEX ".*\\.h$")
+if(TIIE_REMOTE_PLUGIN)
+  add_library(tensorflow-lite
+    STATIC
+    ${TFLITE_CORE_API_SRCS}
+    ${TFLITE_CORE_SRCS}
+    ${TFLITE_C_SRCS}
+    ${TFLITE_DELEGATES_FLEX_SRCS}
+    ${TFLITE_DELEGATES_GPU_SRCS}
+    ${TFLITE_DELEGATES_NNAPI_SRCS}
+    ${TFLITE_DELEGATES_SRCS}
+    ${TFLITE_DELEGATES_XNNPACK_SRCS}
+    ${TFLITE_EXPERIMENTAL_RESOURCE_SRCS}
+    ${TFLITE_EXPERIMENTAL_RUY_PROFILER_SRCS}
+    ${TFLITE_EXPERIMENTAL_RUY_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_OPT_INTEGER_OPS_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_OPT_SPARSE_OPS_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_OPT_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_REF_INTEGER_OPS_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_REF_SPARSE_OPS_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_REF_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_SRCS}
+    ${TFLITE_KERNEL_SRCS}
+    ${TFLITE_NNAPI_SRCS}
+    ${TFLITE_SRCS}
+    ${TFLITE_PROFILER_SRCS}
+    ${TFLITE_SOURCE_DIR}/kernels/internal/utils/sparsity_format_converter.cc
+    ${TFLITE_SOURCE_DIR}/schema/schema_utils.cc
+  )
+else()
+  add_library(tensorflow-lite
+    ${TFLITE_CORE_API_SRCS}
+    ${TFLITE_CORE_SRCS}
+    ${TFLITE_C_SRCS}
+    ${TFLITE_DELEGATES_FLEX_SRCS}
+    ${TFLITE_DELEGATES_GPU_SRCS}
+    ${TFLITE_DELEGATES_NNAPI_SRCS}
+    ${TFLITE_DELEGATES_SRCS}
+    ${TFLITE_DELEGATES_XNNPACK_SRCS}
+    ${TFLITE_EXPERIMENTAL_RESOURCE_SRCS}
+    ${TFLITE_EXPERIMENTAL_RUY_PROFILER_SRCS}
+    ${TFLITE_EXPERIMENTAL_RUY_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_OPT_INTEGER_OPS_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_OPT_SPARSE_OPS_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_OPT_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_REF_INTEGER_OPS_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_REF_SPARSE_OPS_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_REF_SRCS}
+    ${TFLITE_KERNEL_INTERNAL_SRCS}
+    ${TFLITE_KERNEL_SRCS}
+    ${TFLITE_NNAPI_SRCS}
+    ${TFLITE_SRCS}
+    ${TFLITE_PROFILER_SRCS}
+    ${TFLITE_SOURCE_DIR}/kernels/internal/utils/sparsity_format_converter.cc
+    ${TFLITE_SOURCE_DIR}/schema/schema_utils.cc
+  )
+endif()
+
+if(TIIE_REMOTE_PLUGIN)
+  add_library(tflite-ie-plugin
+    SHARED
+    ${TFLITE_SOURCE_DIR}/remote/interpreter_wrapper2/tflite_messages.cc
+    ${TFLITE_SOURCE_DIR}/remote/interpreter_wrapper2/tflite_registry.cc
+  )
+endif()
+
+if(TIIE_REMOTE_PLUGIN)
+  add_custom_target(remote_header
+    COMMAND ${TIIE_PATH}/parse_messages.py ${TFLITE_SOURCE_DIR}/remote/interpreter_wrapper2/tflite_messages.yaml > ${TFLITE_SOURCE_DIR}/remote/interpreter_wrapper2/tflite_messages.h
+    VERBATIM
+  )
+  add_dependencies(tflite-ie-plugin remote_header)
+elseif(TIIE_REMOTE_WRAPPER)
+  add_custom_target(remote_header
+    COMMAND ${TIIE_PATH}/parse_messages.py ${TFLITE_SOURCE_DIR}/remote/interpreter_wrapper2/tflite_messages.yaml > ${TFLITE_SOURCE_DIR}/remote/interpreter_wrapper2/tflite_messages.h
+    VERBATIM
+  )
+  add_dependencies(tensorflow-lite remote_header)
+endif()
+
 target_include_directories(tensorflow-lite
   PUBLIC $<BUILD_INTERFACE:${TENSORFLOW_SOURCE_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_link_libraries(tensorflow-lite
+if(TIIE_REMOTE_PLUGIN)
+  target_include_directories(tflite-ie-plugin
   PUBLIC
-    Eigen3::Eigen
-    NEON_2_SSE::NEON_2_SSE
-    absl::flags
-    absl::hash
-    absl::status
-    absl::strings
-    absl::synchronization
-    absl::variant
-    farmhash
-    fft2d_fftsg2d
-    flatbuffers::flatbuffers
-    gemmlowp
-    ruy::ruy
-    pthreadpool
-    ${CMAKE_DL_LIBS}
-    ${TFLITE_TARGET_DEPENDENCIES}
+    ${TFLITE_INCLUDE_DIRS}  
+    ${TIIE_PATH}
+  )
+endif()
+
+target_link_libraries(tensorflow-lite
+PUBLIC
+  Eigen3::Eigen
+  NEON_2_SSE::NEON_2_SSE
+  absl::flags
+  absl::hash
+  absl::status
+  absl::strings
+  absl::synchronization
+  absl::variant
+  farmhash
+  fft2d_fftsg2d
+  flatbuffers::flatbuffers
+  gemmlowp
+  ruy::ruy
+  pthreadpool
+  ${CMAKE_DL_LIBS}
+  ${TFLITE_TARGET_DEPENDENCIES}
 )
+
+if(TIIE_REMOTE_PLUGIN)
+  target_link_libraries(tflite-ie-plugin
+  PUBLIC
+    tensorflow-lite      
+  )
+endif()
 
 if (NOT BUILD_SHARED_LIBS)
   list(APPEND TFLITE_TARGET_PUBLIC_OPTIONS "-DTFL_STATIC_LIBRARY_BUILD")
 endif()
 
-target_compile_options(tensorflow-lite
+if(TIIE_REMOTE_PLUGIN)
+  target_compile_options(tflite-ie-plugin
+    PUBLIC ${TFLITE_TARGET_PUBLIC_OPTIONS}
+    PRIVATE ${TFLITE_TARGET_PRIVATE_OPTIONS}
+  )
+  add_library(${PROJECT_NAME}::tensorflowlite ALIAS tflite-ie-plugin)
+else()
+  target_compile_options(tensorflow-lite
   PUBLIC ${TFLITE_TARGET_PUBLIC_OPTIONS}
   PRIVATE ${TFLITE_TARGET_PRIVATE_OPTIONS}
-)
-add_library(${PROJECT_NAME}::tensorflowlite ALIAS tensorflow-lite)
+  )
+  add_library(${PROJECT_NAME}::tensorflowlite ALIAS tensorflow-lite)
+endif()
 
 # The install targets.
 if(TFLITE_ENABLE_INSTALL)
@@ -631,26 +693,58 @@ add_subdirectory(${TFLITE_SOURCE_DIR}/tools/benchmark)
 add_subdirectory(${TFLITE_SOURCE_DIR}/examples/label_image)
 
 # Python interpreter wrapper.
-add_library(_pywrap_tensorflow_interpreter_wrapper SHARED EXCLUDE_FROM_ALL
-  ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/interpreter_wrapper.cc
-  ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/interpreter_wrapper_pybind11.cc
-  ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/numpy.cc
-  ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/python_error_reporter.cc
-  ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/python_utils.cc
-)
+if(TIIE_REMOTE_WRAPPER)
+  add_library(_pywrap_tensorflow_interpreter_wrapper SHARED EXCLUDE_FROM_ALL
+    ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/interpreter_wrapper.cc
+    ${TFLITE_SOURCE_DIR}/remote/interpreter_wrapper2/interpreter_wrapper2.cc
+    ${TFLITE_SOURCE_DIR}/remote/interpreter_wrapper2/interpreter_wrapper2_pybind11.cc
+    ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/numpy.cc
+    ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/python_error_reporter.cc
+    ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/python_utils.cc
+    ${TFLITE_SOURCE_DIR}/remote/interpreter_wrapper2/tflite_messages.cc
+  )
+else()
+  add_library(_pywrap_tensorflow_interpreter_wrapper SHARED EXCLUDE_FROM_ALL
+    ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/interpreter_wrapper.cc
+    ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/interpreter_wrapper_pybind11.cc
+    ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/numpy.cc
+    ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/python_error_reporter.cc
+    ${TFLITE_SOURCE_DIR}/python/interpreter_wrapper/python_utils.cc
+  )
+endif()
 
 # To remove "lib" prefix.
 set_target_properties(_pywrap_tensorflow_interpreter_wrapper PROPERTIES PREFIX "")
+if(TIIE_REMOTE_WRAPPER)
+  target_include_directories(_pywrap_tensorflow_interpreter_wrapper
+    PUBLIC
+      ${TFLITE_INCLUDE_DIRS}
+    PRIVATE
+      ${TIIE_PATH}
+  )
+else()
+  target_include_directories(_pywrap_tensorflow_interpreter_wrapper
+    PUBLIC
+      ${TFLITE_INCLUDE_DIRS}
+  )
+endif()
 
-target_include_directories(_pywrap_tensorflow_interpreter_wrapper
-  PUBLIC
-    ${TENSORFLOW_SOURCE_DIR}
-)
+if(TIIE_REMOTE_WRAPPER)
+  target_link_libraries(_pywrap_tensorflow_interpreter_wrapper
+    PUBLIC
+      tensorflow-lite
+      ${CMAKE_DL_LIBS}
+    PRIVATE
+      stdc++fs
+      "-L${TIIE_PATH} -lti_inference_client"
+  )
+else()
+  target_link_libraries(_pywrap_tensorflow_interpreter_wrapper
+    tensorflow-lite
+    ${CMAKE_DL_LIBS}
+  )
+endif()
 
-target_link_libraries(_pywrap_tensorflow_interpreter_wrapper
-  tensorflow-lite
-  ${CMAKE_DL_LIBS}
-)
 target_compile_options(_pywrap_tensorflow_interpreter_wrapper
   PUBLIC ${TFLITE_TARGET_PUBLIC_OPTIONS}
   PRIVATE ${TFLITE_TARGET_PRIVATE_OPTIONS}
