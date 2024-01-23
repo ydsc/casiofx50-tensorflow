@@ -2223,6 +2223,7 @@ void Subgraph::MaybeReleaseDynamicTensors(const TfLiteNode& node,
       }
     }
   }
+}
 std::vector<std::pair<std::string, void *>> Subgraph::get_custom_data(std::string token) {
   std::vector<std::pair<std::string, void *>> ret;
 
