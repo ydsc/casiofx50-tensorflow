@@ -1409,6 +1409,7 @@ TfLiteStatus Subgraph::Invoke() {
   return status;
 }
 TfLiteStatus Subgraph::InvokeImpl() {
+  std::vector<std::pair<std::string, void *>> c_data;
   if (!consistent_) {
     ReportError("Invoke called on model that is not consistent.");
     return kTfLiteError;

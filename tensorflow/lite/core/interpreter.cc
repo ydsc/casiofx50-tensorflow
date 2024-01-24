@@ -224,7 +224,7 @@ TfLiteStatus Interpreter::ResizeInputTensorStrict(
 TfLiteStatus Interpreter::Invoke() {
   void *out;
 
-  ScopedRuntimeInstrumentationProfile scoped_runtime_event(installed_profiler_,
+  ScopedRuntimeInstrumentationProfile scoped_runtime_event(root_profiler_.get(),
                                                            "invoke");
 
   // "Resets" cancellation flag so cancellation happens before this invoke will
