@@ -904,8 +904,6 @@ std::vector<std::pair<std::string, uint64_t>> get_TI_benchmark_data();
   // A root profiler that holds a list of attached profiler implementations.
   // will be nullptr if there's no child profiler registered.
   std::unique_ptr<profiling::RootProfiler> root_profiler_;
-  // Points to the installed Profiler instance.
-  Profiler* installed_profiler_ = nullptr;
 
   bool allow_buffer_handle_output_ = false;
 
