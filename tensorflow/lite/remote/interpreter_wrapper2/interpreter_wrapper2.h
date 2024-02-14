@@ -78,15 +78,15 @@ class InterpreterWrapper2 {
   PyObject* ResizeInputTensor(int i, PyObject* value, bool strict,
                               int subgraph_index);
 
-  int NumTensors() const;
-  std::string TensorName(int i) const;
-  PyObject* TensorType(int i) const;
-  PyObject* TensorSize(int i) const;
-  PyObject* TensorSizeSignature(int i) const;
-  PyObject* TensorSparsityParameters(int i) const;
+  int NumTensors(int subgraph_index) const;
+  std::string TensorName(int i, int subgraph_index) const;
+  PyObject* TensorType(int i, int subgraph_index) const;
+  PyObject* TensorSize(int i, int subgraph_index) const;
+  PyObject* TensorSizeSignature(int i, int subgraph_index) const;
+  PyObject* TensorSparsityParameters(int i, int subgraph_index) const;
   // Deprecated in favor of TensorQuantizationScales, below.
-  PyObject* TensorQuantization(int i) const;
-  PyObject* TensorQuantizationParameters(int i) const;
+  PyObject* TensorQuantization(int i, int subgraph_index) const;
+  PyObject* TensorQuantizationParameters(int i, int subgraph_index) const;
   PyObject* SetTensor(int i, PyObject* value, int subgraph_index);
   PyObject* GetTensor(int i,int subgraph_index) const;
   PyObject* ResetVariableTensors();

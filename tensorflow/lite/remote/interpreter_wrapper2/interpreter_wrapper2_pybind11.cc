@@ -123,33 +123,33 @@ PYBIND11_MODULE(_pywrap_tensorflow_interpreter_wrapper, m) {
       .def("NumTensors", &InterpreterWrapper::NumTensors)
       .def("TensorName", &InterpreterWrapper::TensorName)
       .def("TensorType",
-           [](const InterpreterWrapper& self, int i) {
-             return tensorflow::PyoOrThrow(self.TensorType(i));
+           [](const InterpreterWrapper& self, int i, int subgraph_index) {
+             return tensorflow::PyoOrThrow(self.TensorType(i, subgraph_index));
            })
       .def("TensorSize",
-           [](const InterpreterWrapper& self, int i) {
-             return tensorflow::PyoOrThrow(self.TensorSize(i));
+           [](const InterpreterWrapper& self, int i, int subgraph_index) {
+             return tensorflow::PyoOrThrow(self.TensorSize(i, subgraph_index));
            })
       .def("TensorSizeSignature",
-           [](const InterpreterWrapper& self, int i) {
-             return tensorflow::PyoOrThrow(self.TensorSizeSignature(i));
+           [](const InterpreterWrapper& self, int i, int subgraph_index) {
+             return tensorflow::PyoOrThrow(self.TensorSizeSignature(i, subgraph_index));
            })
       .def("TensorSparsityParameters",
-           [](const InterpreterWrapper& self, int i) {
-             return tensorflow::PyoOrThrow(self.TensorSparsityParameters(i));
+           [](const InterpreterWrapper& self, int i, int subgraph_index) {
+             return tensorflow::PyoOrThrow(self.TensorSparsityParameters(i, subgraph_index));
            })
       .def(
           "TensorQuantization",
-          [](const InterpreterWrapper& self, int i) {
-            return tensorflow::PyoOrThrow(self.TensorQuantization(i));
+          [](const InterpreterWrapper& self, int i, int subgraph_index) {
+            return tensorflow::PyoOrThrow(self.TensorQuantization(i, subgraph_index));
           },
           R"pbdoc(
             Deprecated in favor of TensorQuantizationParameters.
           )pbdoc")
       .def(
           "TensorQuantizationParameters",
-          [](InterpreterWrapper& self, int i) {
-            return tensorflow::PyoOrThrow(self.TensorQuantizationParameters(i));
+          [](InterpreterWrapper& self, int i, int subgraph_index) {
+            return tensorflow::PyoOrThrow(self.TensorQuantizationParameters(i, subgraph_index));
           })
       .def(
           "SetTensor",

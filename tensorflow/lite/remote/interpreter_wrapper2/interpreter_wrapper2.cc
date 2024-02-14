@@ -21,6 +21,7 @@ limitations under the License.
 #include <memory>
 #include <sstream>
 #include <string>
+#include <utility>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/str_format.h"
@@ -58,7 +59,9 @@ using python_utils::PyDecrefDeleter;
 
 PyObject* PyArrayFromFloatVector(const float* data, npy_intp size) {
   void* pydata = malloc(size * sizeof(float));
-  memcpy(pydata, data, size * sizeof(float));
+  if (data != nullptr) {
+    memcpy(pydata, data, size * sizeof(float));
+  }
   PyObject* obj = PyArray_SimpleNewFromData(1, &size, NPY_FLOAT32, pydata);
   PyArray_ENABLEFLAGS(reinterpret_cast<PyArrayObject*>(obj), NPY_ARRAY_OWNDATA);
   return obj;
@@ -66,7 +69,9 @@ PyObject* PyArrayFromFloatVector(const float* data, npy_intp size) {
 
 PyObject* PyArrayFromIntVector(const int* data, npy_intp size) {
   void* pydata = malloc(size * sizeof(int));
-  memcpy(pydata, data, size * sizeof(int));
+  if (data != nullptr) {
+    memcpy(pydata, data, size * sizeof(int));
+  }
   PyObject* obj = PyArray_SimpleNewFromData(1, &size, NPY_INT32, pydata);
   PyArray_ENABLEFLAGS(reinterpret_cast<PyArrayObject*>(obj), NPY_ARRAY_OWNDATA);
   return obj;
@@ -270,9 +275,9 @@ PyObject* InterpreterWrapper2::ResizeInputTensor(int i, PyObject* value,
 /*
  * This returns an int, and never returns an error
  */
-int InterpreterWrapper2::NumTensors() const {
+int InterpreterWrapper2::NumTensors(int subgraph_index) const {
   if(local_exec)
-    return lwrap->NumTensors();
+    return lwrap->NumTensors(subgraph_index);
   try {
     roundtrip(tflite_num_tensors, proxy.id);
     return resp.count();
@@ -284,9 +289,9 @@ int InterpreterWrapper2::NumTensors() const {
 /*
  * This returns a string, and never returns an error
  */
-std::string InterpreterWrapper2::TensorName(int i) const {
+std::string InterpreterWrapper2::TensorName(int i, int subgraph_index) const {
   if(local_exec)
-    return lwrap->TensorName(i);
+    return lwrap->TensorName(i, subgraph_index);
   try {
     roundtrip(tflite_tensor_name, proxy.id, i);
     return resp.name();
@@ -298,9 +303,9 @@ std::string InterpreterWrapper2::TensorName(int i) const {
 /*
  * Get TfLiteType from remote and convert to Numpy Type class 
  */
-PyObject* InterpreterWrapper2::TensorType(int i) const {
+PyObject* InterpreterWrapper2::TensorType(int i, int subgraph_index) const {
   if(local_exec)
-    return lwrap->TensorType(i);
+    return lwrap->TensorType(i, subgraph_index);
   try {
     roundtrip(tflite_tensor_type, proxy.id, i);
     if(resp.status())
@@ -319,9 +324,9 @@ PyObject* InterpreterWrapper2::TensorType(int i) const {
   return nullptr;
 }
 
-PyObject* InterpreterWrapper2::TensorSize(int i) const {
+PyObject* InterpreterWrapper2::TensorSize(int i, int subgraph_index) const {
   if(local_exec)
-    return lwrap->TensorSize(i);
+    return lwrap->TensorSize(i, subgraph_index);
   try {
     roundtrip(tflite_tensor_size, proxy.id, i);
     if(resp.status())
@@ -337,9 +342,9 @@ PyObject* InterpreterWrapper2::TensorSize(int i) const {
   return nullptr;
 }
 
-PyObject* InterpreterWrapper2::TensorSizeSignature(int i) const {
+PyObject* InterpreterWrapper2::TensorSizeSignature(int i, int subgraph_index) const {
   if(local_exec)
-    return lwrap->TensorSizeSignature(i);
+    return lwrap->TensorSizeSignature(i, subgraph_index);
   try {
     roundtrip(tflite_tensor_size_signature, proxy.id, i);
     if(resp.status())
@@ -359,9 +364,9 @@ PyObject* InterpreterWrapper2::TensorSizeSignature(int i) const {
  * Use <PyDictFromSparsityParam> from interpreter_wrapper.cc
  * and therefore convert out response to a TfLiteSparsity struct
  */
-PyObject* InterpreterWrapper2::TensorSparsityParameters(int i) const {
+PyObject* InterpreterWrapper2::TensorSparsityParameters(int i, int subgraph_index) const {
   if(local_exec)
-    return lwrap->TensorSparsityParameters(i);
+    return lwrap->TensorSparsityParameters(i, subgraph_index);
   try {
     roundtrip(tflite_tensor_sparsity_parameters, proxy.id, i);
     if(resp.status())
@@ -412,9 +417,9 @@ PyObject* InterpreterWrapper2::TensorSparsityParameters(int i) const {
   return nullptr;
 }
 
-PyObject* InterpreterWrapper2::TensorQuantization(int i) const {
+PyObject* InterpreterWrapper2::TensorQuantization(int i, int subgraph_index) const {
   if(local_exec)
-    return lwrap->TensorQuantization(i);
+    return lwrap->TensorQuantization(i, subgraph_index);
   try {
     roundtrip(tflite_tensor_quantization, proxy.id, i);
     if(resp.status())
@@ -430,9 +435,9 @@ PyObject* InterpreterWrapper2::TensorQuantization(int i) const {
   return nullptr;
 }
 
-PyObject* InterpreterWrapper2::TensorQuantizationParameters(int i) const {
+PyObject* InterpreterWrapper2::TensorQuantizationParameters(int i, int subgraph_index) const {
   if(local_exec)
-    return lwrap->TensorQuantizationParameters(i);
+    return lwrap->TensorQuantizationParameters(i, subgraph_index);
   try {
     roundtrip(tflite_tensor_quantization_parameters, proxy.id, i);
     if(resp.status())
